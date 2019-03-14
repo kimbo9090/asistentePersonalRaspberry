@@ -2,10 +2,15 @@ from wit import Wit
 from gtts import gTTS 
 import os 
 import datetime
-import re
 from a import giveToken
+from a import giveToken2
+import pyowm
+import requests 
+import geocoder
 access_token = giveToken()
+access_token2 = giveToken2()
 client = Wit(access_token)
+owm = pyowm.OWM(access_token2)
 
 def procesaMes(mes):
     mesPalabra = ''
@@ -74,32 +79,36 @@ def texto_audio(texto):
     tts.save(filename)
     os.system("mpg321 "+filename) 
     os.remove(filename)
-    
+
+def dame_Localizacion():
+    g = geocoder.ip('me')
+    return g.latlng
+
+def dame_Tiempo():
+    loc = dame_Localizacion()
+    observation = owm.weather_at_coords(loc[0],loc[1])
+    w = observation.get_weather()
+    return w
 
 
-# hora = dimeFecha()
-# texto_audio(hora)
-fecha = dimeFecha()
-hora = dimeHora()
 
-texto_audio(fecha)
-# texto_audio(hora)
+a = dame_Tiempo()
+
+print(a)
+
+
 '''
-client = Wit(access_token)
 resp = None
-with open('yo.wav', 'rb') as f:
+with open('bon.wav', 'rb') as f:
   resp = client.speech(f, None, {'Content-Type': 'audio/wav'})
 print('Yay, got Wit.ai response: ' + str(resp))
+
+
+myText = resp['_text']
+
+if ('bonita' in myText):
+    texto_audio('Muchas gracias, te lo agradezco.')
 '''
-
-# myText = resp['_text']
-
-
-
-
-
-
-
 
 
 
