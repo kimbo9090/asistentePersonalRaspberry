@@ -1,12 +1,18 @@
 from wit import Wit
 from gtts import gTTS 
 import os 
+import ast
+import wave
 import datetime
 from a import giveToken
 from a import giveToken2
 import pyowm
 import requests 
 import geocoder
+import speech_recognition as sr
+r = sr.Recognizer()
+mic = sr.Microphone()
+mic = sr.Microphone(device_index=5)
 access_token = giveToken()
 access_token2 = giveToken2()
 client = Wit(access_token)
@@ -87,29 +93,56 @@ def dame_Localizacion():
 def dame_Tiempo():
     loc = dame_Localizacion()
     observation = owm.weather_at_coords(loc[0],loc[1])
-    w = observation.get_weather()
-    return w
+    weather = observation.get_weather()
+    reponseString = str(weather)
+    reponseSplitted = reponseString.split(",")
+    reponseSplitted2 = reponseSplitted[2].strip(">")
+    reponseSplitted3 = reponseSplitted2.split("=")
+    return reponseSplitted3[1]
 
+def dame_Temperatura():
+    loc = dame_Localizacion()
+    observation = owm.weather_at_coords(loc[0],loc[1])
+    weather = observation.get_weather()
+    temperatures = weather.get_temperature('celsius')
 
+    temperatura = temperatures['temp']
+    temperatura_maxima = temperatures['temp_max']
+    temperatura_minima = temperatures['temp_min']
 
-a = dame_Tiempo()
+    temperatura_frase = "Hoy tenemos una temperatura de %s grados           , con máxima de %s               ,y mínima de %s " % (temperatura,temperatura_maxima,temperatura_minima)
 
-print(a)
+    return temperatura_frase
 
+while True:
 
-'''
-resp = None
-with open('bon.wav', 'rb') as f:
-  resp = client.speech(f, None, {'Content-Type': 'audio/wav'})
-print('Yay, got Wit.ai response: ' + str(resp))
-
-
-myText = resp['_text']
-
-if ('bonita' in myText):
-    texto_audio('Muchas gracias, te lo agradezco.')
-'''
-
+    with mic as source:
+        r.adjust_for_ambient_noise(source)
+        audio = r.listen(source)
+    a = r.recognize_wit(audio,access_token)
+    if ("canela" in a):
+        texto_audio("Dime que quieres que te diga, hermoso")
+        with mic as source2:
+            r.adjust_for_ambient_noise(source2)
+            audio2 = r.listen(source2)
+        b = r.recognize_wit(audio2,access_token)
+        if ('hora' in b):
+            hora = dimeHora()
+            texto_audio(hora)
+        elif ('fecha' in b):
+            fecha = dimeFecha()
+            texto_audio(fecha)
+        elif ('temperatura' in b):
+            temperatura = dame_Temperatura()
+            texto_audio(temperatura)
+        elif ('tiempo' in b):
+            temp = dame_Tiempo()
+            texto_audio(temp)
+        else:
+            texto_audio('Perdona, no te he entendido, por favor llámame de nuevo y repite la acción')
+    else:
+        print("No has dicho canela")
+        print (a)
 
 
 
