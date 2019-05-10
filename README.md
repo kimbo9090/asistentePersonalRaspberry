@@ -1,6 +1,6 @@
 # Raspsistant
 
-Este proyecto consiste en un asistente personal codificado íntegramente en Python. Tiene como objetivos mínimos lo siguiente:
+Este proyecto consiste en un asistente personal codificado íntegramente en Python. Tiene como objetivos mínimos los siguientes puntos:
 <ol>
   <li> Que el asistente sea capaz de procesar audios </li>
   <li> Decir la fecha </li>
