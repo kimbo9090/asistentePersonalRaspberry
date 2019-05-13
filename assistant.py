@@ -141,45 +141,61 @@ def dame_lista_videos(tituloVideo):
             fullVids.remove(vid)
     return fullVids[0]
 # Exporta un video de m4a a mp3 
-def exporta_mp3(m4aPath,titulo):
+def exporta_mp3(m4aPath,url):
     m4a_audio = AudioSegment.from_file(m4aPath+'.m4a', format="m4a")
-    m4a_audio.export('./videos/'+titulo+'.mp3', format="mp3")
+    m4a_audio.export('./videos/'+url+'.mp3', format="mp3")
 # A partir de una URL devuelve cierta información
 def dameInfoVideo(url):
     info = []
     video = pafy.new(url)
+    info.append(video.duration)
     info.append(video.title)
-    info.append(video.viewcount)
-    info.append(video.likes)
     info.append(video.dislikes)
-    info.append(video.description)
+    info.append(video.likes)
+    info.append(video.viewcount)
+    info.append(video.username)
     return info
 # Descarga un video en concreto y lo maneja
-def descargaVideo(tituloVideo):
+
+def reproduceVideo(tituloVideo):
     videoInfo = []
     url = dame_lista_videos(tituloVideo)
     videoInfo = dameInfoVideo(url)
-    video = pafy.new(url)
-    streams = video.streams
-    download = video.getbestaudio(preftype="m4a",ftypestrict=True)
-    download.download(filepath="./videos")
-    exporta_mp3('./videos/'+videoInfo[0],videoInfo[0])    
-    os.remove('./videos/'+videoInfo[0]+'.m4a')
+
+    con_bd = sqlite3.connect('database.db')
+    cursor_bd = con_bd.cursor()
+    cursor_bd.execute("select * from VIDEOS where URL=?",(url,))
+    videoURL = cursor_bd.fetchone()
+
+    # TODO Hacer consulta por la búsqueda de el usuario
+
+    if (videoURL is None): # TODO Filtrar por búsqueda de Usuario
+        video = pafy.new(url)
+        streams = video.streams
+        download = video.getbestaudio(preftype="m4a",ftypestrict=True)
+        download.download(filepath="./videos")
+        exporta_mp3('./videos/'+videoInfo[1],videoInfo[1])    
+        os.remove('./videos/'+videoInfo[1]+'.m4a')
+
+        insert = (url,videoInfo[0],videoInfo[1],videoInfo[2],videoInfo[3],videoInfo[4],tituloVideo,videoInfo[5])
+        cursor_bd.execute("INSERT INTO VIDEOS VALUES (?,?,?,?,?,?,?,?)",insert)
+        con_bd.commit()
+        con_bd.close()
+
+        filename = './videos/'+ "\"" + videoInfo[1]+'.mp3' + "\""
+        os.system("mpg321 -q "+filename) 
+    else:
+        filename = './videos/'+ "\"" + videoInfo[1]+'.mp3' + "\""
+        os.system("mpg321 -q "+filename) 
+# TODO Filtar todo lo que diga el usuario despues de reproduce -->
+def procesaInputUsuarioReproducir():
+    pass
+
+reproduceVideo('10 sec video')
 
 
 
-descargaVideo('2 min vid')
 
-
-
-'''
-con_bd = sqlite3.connect('videos.db')
-cursor_db = con_bd.cursor()
-insert = (description,titulo,visitas,likes,url,dislikes)
-cursor_db.execute("INSERT INTO VIDEOS (Description,Title,visits,likes,url,dislikes) VALUES (?,?,?,?,?,?)", insert)
-con_bd.commit()
-con_bd.close()
-'''
 
 '''
 while True:
