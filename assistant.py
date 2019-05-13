@@ -137,44 +137,49 @@ def dame_lista_videos(tituloVideo):
     for vid in soup.findAll(attrs={'class':'yt-uix-tile-link'}):
         fullVids.append('https://www.youtube.com' + vid['href'])
     for vid in fullVids:
-        if 'user' in vid:
+        if 'user' in vid or 'channel' in vid:
             fullVids.remove(vid)
-    return fullVids
+    return fullVids[0]
 # Exporta un video de m4a a mp3 
 def exporta_mp3(m4aPath,titulo):
-    m4a_audio = AudioSegment.from_file(m4aPath, format="m4a")
-    m4a_audio.export(id+'.mp3', format="mp3")
+    m4a_audio = AudioSegment.from_file(m4aPath+'.m4a', format="m4a")
+    m4a_audio.export('./videos/'+titulo+'.mp3', format="mp3")
+# A partir de una URL devuelve cierta información
+def dameInfoVideo(url):
+    info = []
+    video = pafy.new(url)
+    info.append(video.title)
+    info.append(video.viewcount)
+    info.append(video.likes)
+    info.append(video.dislikes)
+    info.append(video.description)
+    return info
+# Descarga un video en concreto y lo maneja
+def descargaVideo(tituloVideo):
+    videoInfo = []
+    url = dame_lista_videos(tituloVideo)
+    videoInfo = dameInfoVideo(url)
+    video = pafy.new(url)
+    streams = video.streams
+    download = video.getbestaudio(preftype="m4a",ftypestrict=True)
+    download.download(filepath="./videos")
+    exporta_mp3('./videos/'+videoInfo[0],videoInfo[0])    
+    os.remove('./videos/'+videoInfo[0]+'.m4a')
 
 
 
-a = dame_lista_videos('Alexelcapo')
-url = 'https://www.youtube.com/watch?v=IGQBtbKSVhY'
-
-video = pafy.new(url)
-
-titulo = video.title
-visitas = video.viewcount
-likes = video.likes
-dislikes = video.dislikes
-description = video.description
+descargaVideo('2 min vid')
 
 
 
-'''
-streams = video.streams
-
-download = video.getbestaudio(preftype="m4a",ftypestrict=True)
-download.download(filepath="./videos")
 '''
 con_bd = sqlite3.connect('videos.db')
 cursor_db = con_bd.cursor()
-'''
 insert = (description,titulo,visitas,likes,url,dislikes)
 cursor_db.execute("INSERT INTO VIDEOS (Description,Title,visits,likes,url,dislikes) VALUES (?,?,?,?,?,?)", insert)
-'''
 con_bd.commit()
 con_bd.close()
-
+'''
 
 '''
 while True:
