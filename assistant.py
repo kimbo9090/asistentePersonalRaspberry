@@ -19,11 +19,9 @@ import sqlite3
 from pydub import AudioSegment
 
 
-'''
+
 r = sr.Recognizer()
 mic = sr.Microphone()
-mic = sr.Microphone(device_index=5)
-'''
 access_token = giveToken()
 access_token2 = giveToken2()
 client = Wit(access_token)
@@ -170,9 +168,7 @@ def reproduceVideo(tituloVideo):
 
     if (videoURL is None): # TODO Filtrar por búsqueda de Usuario
         duration = videoInfo[0]
-        durationSplitted = duration.split(":")
-       
-        
+        durationSplitted = duration.split(":")   
         video = pafy.new(url)
         streams = video.streams
         download = video.getbestaudio(preftype="m4a",ftypestrict=True)
@@ -197,14 +193,6 @@ def procesaInputUsuarioReproducir():
 def playlist_aleatoria():
     os.system("mpg321 -B ./videos -Z")
 
-
-playlist_aleatoria()
-
-
-
-
-
-'''
 while True:
 
     with mic as source:
@@ -212,7 +200,7 @@ while True:
         audio = r.listen(source)
     a = r.recognize_wit(audio,access_token)
     if ("canela" in a):
-        texto_audio("Dime que quieres que te diga, hermoso")
+        texto_audio("Que quieres, que pasa, ahora que")
         with mic as source2:
             r.adjust_for_ambient_noise(source2)
             audio2 = r.listen(source2)
@@ -229,12 +217,15 @@ while True:
         elif ('tiempo' in b):
             temp = dame_Tiempo()
             texto_audio(temp)
+        elif ('aleatorio' in b or 'aleatoria' in b):
+            texto_audio('¿Una canción aleatoria? Voy')
+            playlist_aleatoria()
         else:
             texto_audio('Perdona, no te he entendido, por favor llámame de nuevo y repite la acción')
     else:
         print("No has dicho canela")
         print (a)
-'''
+
 
 
 
