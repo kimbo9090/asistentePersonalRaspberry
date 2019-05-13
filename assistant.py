@@ -11,16 +11,19 @@ import pyowm
 import urllib.request
 from bs4 import BeautifulSoup
 import requests 
+import wave
 import geocoder
 import speech_recognition as sr
 import pafy
 import sqlite3
+from pydub import AudioSegment
 
 
+'''
 r = sr.Recognizer()
 mic = sr.Microphone()
 mic = sr.Microphone(device_index=5)
-
+'''
 access_token = giveToken()
 access_token2 = giveToken2()
 client = Wit(access_token)
@@ -137,9 +140,15 @@ def dame_lista_videos(tituloVideo):
         if 'user' in vid:
             fullVids.remove(vid)
     return fullVids
+# Exporta un video de m4a a mp3 
+def exporta_mp3(m4aPath,titulo):
+    m4a_audio = AudioSegment.from_file(m4aPath, format="m4a")
+    m4a_audio.export(id+'.mp3', format="mp3")
+
+
 
 a = dame_lista_videos('Alexelcapo')
-url = a[0]
+url = 'https://www.youtube.com/watch?v=IGQBtbKSVhY'
 
 video = pafy.new(url)
 
@@ -149,12 +158,20 @@ likes = video.likes
 dislikes = video.dislikes
 description = video.description
 
+
+
+'''
+streams = video.streams
+
+download = video.getbestaudio(preftype="m4a",ftypestrict=True)
+download.download(filepath="./videos")
+'''
 con_bd = sqlite3.connect('videos.db')
 cursor_db = con_bd.cursor()
-
+'''
 insert = (description,titulo,visitas,likes,url,dislikes)
 cursor_db.execute("INSERT INTO VIDEOS (Description,Title,visits,likes,url,dislikes) VALUES (?,?,?,?,?,?)", insert)
-
+'''
 con_bd.commit()
 con_bd.close()
 

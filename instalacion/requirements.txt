@@ -8,3 +8,4 @@ SpeechRecognition
 youtube_dl
 pafy
 beautifulsoup4
+pydub
