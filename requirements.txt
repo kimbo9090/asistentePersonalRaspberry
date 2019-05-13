@@ -5,7 +5,7 @@ gTTS
 pyowm
 geocoder
 SpeechRecognition
-PyAudio
 youtube_dl
 pafy
 python-vlc
+beautifulsoup4
