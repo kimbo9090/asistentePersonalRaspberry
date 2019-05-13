@@ -156,7 +156,6 @@ def dameInfoVideo(url):
     info.append(video.username)
     return info
 # Descarga un video en concreto y lo maneja
-
 def reproduceVideo(tituloVideo):
     videoInfo = []
     url = dame_lista_videos(tituloVideo)
@@ -170,28 +169,36 @@ def reproduceVideo(tituloVideo):
     # TODO Hacer consulta por la búsqueda de el usuario
 
     if (videoURL is None): # TODO Filtrar por búsqueda de Usuario
+        duration = videoInfo[0]
+        durationSplitted = duration.split(":")
+       
+        
         video = pafy.new(url)
         streams = video.streams
         download = video.getbestaudio(preftype="m4a",ftypestrict=True)
-        download.download(filepath="./videos")
+        download.download(filepath="./videos",quiet=False)
         exporta_mp3('./videos/'+videoInfo[1],videoInfo[1])    
         os.remove('./videos/'+videoInfo[1]+'.m4a')
-
         insert = (url,videoInfo[0],videoInfo[1],videoInfo[2],videoInfo[3],videoInfo[4],tituloVideo,videoInfo[5])
         cursor_bd.execute("INSERT INTO VIDEOS VALUES (?,?,?,?,?,?,?,?)",insert)
         con_bd.commit()
         con_bd.close()
-
         filename = './videos/'+ "\"" + videoInfo[1]+'.mp3' + "\""
         os.system("mpg321 -q "+filename) 
     else:
         filename = './videos/'+ "\"" + videoInfo[1]+'.mp3' + "\""
         os.system("mpg321 -q "+filename) 
+        con_bd.close()
+
 # TODO Filtar todo lo que diga el usuario despues de reproduce -->
 def procesaInputUsuarioReproducir():
     pass
 
-reproduceVideo('10 sec video')
+def playlist_aleatoria():
+    os.system("mpg321 -B ./videos -Z")
+
+
+playlist_aleatoria()
 
 
 

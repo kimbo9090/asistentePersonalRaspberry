@@ -3,4 +3,5 @@ sudo apt-get install python-pyaudio
 sudo apt-get install mpg321
 sudo apt-get install -y python3-dev libasound2-dev
 sudo apt install ffmpeg
+pip3 install -U git+https://github.com/mps-youtube/pafy.git
 pip3 install -r requirements.txt
