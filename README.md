@@ -9,7 +9,7 @@ Este proyecto consiste en un asistente personal codificado íntegramente en Pyth
   <li> Decir la temperatura de hoy y de días próximos </li>
   <li> Decir o hallar la localización de el usuario </li>
   <li> Reproducir videos de Youtube guardados locálmente en una base de datos </li>
-  <li> Integración con SQL oracle </li>
+  <li> Integración con SQLite </li>
   <li> Integración con Google Calendar </li>
 </ol>
 
