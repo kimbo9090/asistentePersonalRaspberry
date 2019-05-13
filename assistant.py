@@ -1,8 +1,8 @@
+# -*- coding: utf-8 -*-
 from wit import Wit
 from gtts import gTTS 
 import os 
 import ast
-import vlc
 import wave
 import datetime
 from a import giveToken
@@ -14,6 +14,8 @@ import requests
 import geocoder
 import speech_recognition as sr
 import pafy
+import sqlite3
+
 
 r = sr.Recognizer()
 mic = sr.Microphone()
@@ -137,8 +139,24 @@ def dame_lista_videos(tituloVideo):
     return fullVids
 
 a = dame_lista_videos('Alexelcapo')
-b = dame_Temperatura()
-texto_audio(b)
+url = a[0]
+
+video = pafy.new(url)
+
+titulo = video.title
+visitas = video.viewcount
+likes = video.likes
+dislikes = video.dislikes
+description = video.description
+
+con_bd = sqlite3.connect('videos.db')
+cursor_db = con_bd.cursor()
+
+insert = (description,titulo,visitas,likes,url,dislikes)
+cursor_db.execute("INSERT INTO VIDEOS (Description,Title,visits,likes,url,dislikes) VALUES (?,?,?,?,?,?)", insert)
+
+con_bd.commit()
+con_bd.close()
 
 
 '''

@@ -7,5 +7,4 @@ geocoder
 SpeechRecognition
 youtube_dl
 pafy
-python-vlc
 beautifulsoup4
