@@ -186,9 +186,6 @@ def reproduceVideo(tituloVideo):
         os.system("mpg321 -q "+filename) 
         con_bd.close()
 
-# TODO Filtar todo lo que diga el usuario despues de reproduce -->
-def procesaInputUsuarioReproducir():
-    pass
 
 def playlist_aleatoria():
     os.system("mpg321 -B ./videos -Z")
@@ -200,7 +197,7 @@ while True:
         audio = r.listen(source)
     a = r.recognize_wit(audio,access_token)
     if ("canela" in a):
-        texto_audio("Que quieres, que pasa, ahora que")
+        texto_audio("¿En qué puedo ayudarte?")
         with mic as source2:
             r.adjust_for_ambient_noise(source2)
             audio2 = r.listen(source2)
@@ -218,14 +215,16 @@ while True:
             temp = dame_Tiempo()
             texto_audio(temp)
         elif ('aleatorio' in b or 'aleatoria' in b):
-            texto_audio('¿Una canción aleatoria? Voy')
             playlist_aleatoria()
+        elif ('reproduce' in b):
+            buscar = b.strip('reproduce')
+            print(buscar)
+            reproduceVideo(buscar)
         else:
             texto_audio('Perdona, no te he entendido, por favor llámame de nuevo y repite la acción')
     else:
         print("No has dicho canela")
         print (a)
-
 
 
 
